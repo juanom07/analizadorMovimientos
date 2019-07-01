@@ -56,8 +56,15 @@ class MotivoMovimiento
     public function getJSON(){
         $output = "";
         $output .= '"id": "' . $this->getId() .'", ';
+
+        if ($this->getCategoriaMovimiento()){
+            $output .= '"categoriaMovimiento": ' . $this->getCategoriaMovimiento()->getJSON() .', ';
+        }else{
+            $output .= '"categoriaMovimiento": "", ';
+        }
+
         $output .= '"descripcion": "' . $this->getDescripcion() .'"';
-        $output .= '"categoriaMovimiento": ' . $this->getCategoriaMovimiento()->getJSON() .', ';
+        
 
         return '{' . $output . '}';
     }

@@ -13,9 +13,11 @@ use Zend\View\Model\ViewModel;
 class IndexController extends AbstractActionController
 {
     private $movimientosManager;
+    private $catalogoManager;
 
-    public function __construct($movimientosManager) {
+    public function __construct($movimientosManager, $catalogoManager) {
         $this->movimientosManager = $movimientosManager;
+        $this->catalogoManager = $catalogoManager;
     }
 
     public function indexAction()
@@ -26,6 +28,10 @@ class IndexController extends AbstractActionController
 
             $this->movimientosManager->procesarArchivoExcel($files['archivo']['tmp_name']);
         }
-        return new ViewModel();
+
+        $arrMovimientosJSON = $this->catalogoManager->getArrEntidadJSON('Movimiento');
+        return new ViewModel([
+            'arrMovimientosJSON' => $arrMovimientosJSON
+        ]);
     }
 }

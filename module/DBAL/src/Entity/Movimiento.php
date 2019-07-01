@@ -86,10 +86,10 @@ class Movimiento
     public function getJSON(){
         $output = "";
         $output .= '"id": "' . $this->getId() .'", ';
-        $output .= '"descripcion": "' . $this->getDescripcion() .'"';
-        $output .= '"fecha": "' . $this->getFecha() .'"';
-        $output .= '"valor": "' . $this->getValor() .'"';
-        $output .= '"motivoMovimiento": ' . $this->getMotivoMovimiento()->getJSON() .', ';
+        $output .= '"descripcion": "' . $this->getDescripcion() .'", ';
+        $output .= '"fecha": "' . $this->getFecha() .'", ';
+        $output .= '"valor": "' . $this->getValor() .'", ';
+        $output .= '"motivoMovimiento": ' . $this->getMotivoMovimiento()->getJSON() .'';
 
         return '{' . $output . '}';
     }

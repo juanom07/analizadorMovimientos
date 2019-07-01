@@ -56,8 +56,14 @@ class CategoriaMovimiento
     public function getJSON(){
         $output = "";
         $output .= '"id": "' . $this->getId() .'", ';
+
+        if ($this->getTipoMovimiento()){
+            $output .= '"tipoMovimiento": ' . $this->getTipoMovimiento()->getJSON() .', ';
+        }else{
+            $output .= '"tipoMovimiento": "", ';
+        }
+
         $output .= '"descripcion": "' . $this->getDescripcion() .'"';
-        $output .= '"tipoMovimiento": ' . $this->getTipoMovimiento()->getJSON() .', ';
 
         return '{' . $output . '}';
     }

@@ -16,7 +16,7 @@
                         <tr>
                             <th class="text-center">Fecha</th>
                             <th class="text-center">Motivo</th>
-                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Detalle</th>
                             <th class="text-center">Valor</th>
                         </tr>
                     </thead>
@@ -31,35 +31,60 @@
 
 <script>
 var url = '<?= $this->serverUrl(); ?>';
+var arrMovimientosJSON = <?= $arrMovimientosJSON ?>;
+
+function dibujarTablaMovimientos(){
+    $('#bodyMovimientos').find('tr').remove();
+    
+    for (var i = 0; i < arrMovimientosJSON.length; i++)
+    {
+        var movimiento = arrMovimientosJSON[i];
+        var body = document.getElementById("bodyMovimientos");
+        var row = body.insertRow();
+        
+        row.id = i;
+        
+        var fecha = row.insertCell(0);
+        var motivo = row.insertCell(1);
+        var detalle = row.insertCell(2);
+        var valor = row.insertCell(3);
+        
+        fecha.innerHTML = movimiento.fecha;
+        motivo.innerHTML = movimiento.motivoMovimiento.descripcion;
+        detalle.innerHTML = movimiento.descripcion;
+        valor.innerHTML = movimiento.valor;
+    }
+}
 
 $(document).ready(function (e) {
+    dibujarTablaMovimientos();
+
     $("#form").on('submit',(function(e) {
-    e.preventDefault();
-    $.ajax({
-        url: url + '/',
-        type: "POST",
-        data:  new FormData(this),
-        contentType: false,
-        cache: false,
-        processData:false,
-        beforeSend : function()
-        {
-            //$("#preview").fadeOut();
-            $("#err").fadeOut();
-        },
-        success: function(data){
-            if(data=='invalid'){
-                // invalid file format.
-                $("#err").html("Invalid File !").fadeIn();
-            }else{
-                // view uploaded file.
-                $("#preview").html(data).fadeIn();
-                $("#form")[0].reset(); 
-            }
-        },
-        error: function(e) {
-            $("#err").html(e).fadeIn();
-        }          
+        e.preventDefault();
+        $.ajax({
+            url: url + '/',
+            type: "POST",
+            data:  new FormData(this),
+            contentType: false,
+            cache: false,
+            processData:false,
+            beforeSend : function(){
+                //$("#preview").fadeOut();
+                $("#err").fadeOut();
+            },
+            success: function(data){
+                if(data=='invalid'){
+                    // invalid file format.
+                    $("#err").html("Invalid File !").fadeIn();
+                }else{
+                    // view uploaded file.
+                    $("#preview").html(data).fadeIn();
+                    $("#form")[0].reset(); 
+                }
+            },
+            error: function(e) {
+                $("#err").html(e).fadeIn();
+            }          
         });
     }));
 });
