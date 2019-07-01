@@ -25,6 +25,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            Service\CatalogoManager::class => Service\Factory\CatalogoManagerFactory::class
         ],
     ]
 ];

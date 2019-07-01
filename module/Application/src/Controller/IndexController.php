@@ -10,8 +10,6 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
-
 class IndexController extends AbstractActionController
 {
     private $movimientosManager;
@@ -26,9 +24,7 @@ class IndexController extends AbstractActionController
             $data = $this->params()->fromPost();
             $files = $this->params()->fromFiles();
 
-            $spreadsheet = IOFactory::load($files['archivo']['tmp_name']);
-            $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-            var_dump($sheetData);
+            $this->movimientosManager->procesarArchivoExcel($files['archivo']['tmp_name']);
         }
         return new ViewModel();
     }
