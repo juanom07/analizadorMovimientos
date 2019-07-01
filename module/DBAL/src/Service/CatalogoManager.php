@@ -85,4 +85,15 @@ class CatalogoManager {
         return $this->arrEntidadesAJSON($arrEntidad);
     }
 
+    public function getMotivoMovimientoPorDescripcion($descripcion){
+        $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findOneBy(['descripcion' => $descripcion]);
+
+        return $MotivoMovimiento;
+    }
+
+    
+    /**
+     * LA CREACION Y MODIFICACION DE LAS ENTIDADES MOVERLAS LUEGO A UN MANAGER DIFERENTE
+     */
+
 }

@@ -36,7 +36,7 @@ class Movimiento
      * @ORM\ManyToOne(targetEntity="MotivoMovimiento")
      * @ORM\JoinColumn(name="idMotivoMovimiento", referencedColumnName="idMotivoMovimiento")
      */
-    protected $CategoriaMovimiento;
+    protected $MotivoMovimiento;
 
     public function setDescripcion($descripcion)
     {
