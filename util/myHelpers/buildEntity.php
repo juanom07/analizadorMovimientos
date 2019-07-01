@@ -51,9 +51,11 @@
     }
 
     process([
-        'idMotivoMovimiento', 
+        'idMovimiento', 
 'descripcion', 
-'idCategoriaMovimiento', 
+'fecha', 
+'valor', 
+'idMotivoMovimiento', 
     ]);
 
      //SELECT '''' + COLUMN_NAME + ''', ' FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'Generadores3erUsuario';
