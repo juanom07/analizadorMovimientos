@@ -38,7 +38,12 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            Controller\IndexController::class => InvokableFactory::class,
+            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            Service\MovimientosManager::class => Service\Factory\MovimientosManagerFactory::class
         ],
     ],
     'view_manager' => [

@@ -14,6 +14,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class IndexController extends AbstractActionController
 {
+    private $movimientosManager;
+
+    public function __construct($movimientosManager) {
+        $this->movimientosManager = $movimientosManager;
+    }
+
     public function indexAction()
     {
         if ($this->getRequest()->isPost()) {
