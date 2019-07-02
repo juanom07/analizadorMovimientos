@@ -1,16 +1,17 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div>
+        <div>
             <form id="form" action="ajaxupload.php" method="post" enctype="multipart/form-data">
                 <input id="uploadImage" type="file" name="archivo" />
                 <input class="btn btn-success" type="submit" value="Upload">
             </form>
+        </div>
+        <div class="card mt-3">
+            
+            <div class="card-header">
+                <h3 class="">Movimientos</h3>
             </div>
-            <div class="panel-heading mt-3">
-                <h3 class="panel-title">Movimientos</h3>
-            </div>
-            <div class="panel-body" id="divIndex">
+            <div class="card-body" id="divIndex">
                 <table id="tablaMovimientos" class="table table-hover">
                     <thead>
                         <tr class="">
@@ -30,7 +31,7 @@
 </div>
 
 <script>
-var url = '<?= $this->serverUrl(); ?>';
+
 var arrMovimientosJSON = <?= $arrMovimientosJSON ?>;
 
 function dibujarTablaMovimientos(){

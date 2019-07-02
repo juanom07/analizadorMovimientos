@@ -33,4 +33,20 @@ class ConfController extends AbstractActionController
             'arrMotivoMovimientoJSON' => $arrMotivoMovimientoJSON
         ]);
     }
+
+    public function editarAction(){
+        $parametros = $this->params()->fromRoute();
+        $idMotivoMovimiento = $parametros['id'];
+        $MotivoMovimiento = $this->catalogoManager->getMotivoMovimiento($idMotivoMovimiento);
+
+        if ($this->getRequest()->isPost()) {
+            //procesar el guardado de la info
+        }
+
+        $arrCategoriaMovimiento = $this->catalogoManager->getArrEntidadJSON('CategoriaMovimiento');
+        return new ViewModel([
+            'MotivoMovimiento' => $MotivoMovimiento,
+            'arrCategoriaMovimientoJSON' => $arrCategoriaMovimiento
+        ]);
+    }
 }
