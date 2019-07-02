@@ -85,6 +85,7 @@ class MovimientosManager {
             $Movimiento->setFecha($fecha);
             $Movimiento->setMotivoMovimiento($motivoMovimiento);
             $Movimiento->setValor($valor);
+            $Movimiento->setDescripcion($arrStrings[1]);
 
             $this->entityManager->persist($Movimiento);
             $this->entityManager->flush();

@@ -7,13 +7,13 @@
                 <input class="btn btn-success" type="submit" value="Upload">
             </form>
             </div>
-            <div class="panel-heading">
+            <div class="panel-heading mt-3">
                 <h3 class="panel-title">Movimientos</h3>
             </div>
             <div class="panel-body" id="divIndex">
                 <table id="tablaMovimientos" class="table table-hover">
                     <thead>
-                        <tr>
+                        <tr class="">
                             <th class="text-center">Fecha</th>
                             <th class="text-center">Motivo</th>
                             <th class="text-center">Detalle</th>
@@ -49,10 +49,18 @@ function dibujarTablaMovimientos(){
         var detalle = row.insertCell(2);
         var valor = row.insertCell(3);
         
-        fecha.innerHTML = movimiento.fecha;
+        fecha.innerHTML = movimiento.fecha.substring(0,16);
         motivo.innerHTML = movimiento.motivoMovimiento.descripcion;
         detalle.innerHTML = movimiento.descripcion;
         valor.innerHTML = movimiento.valor;
+
+        if (parseFloat(movimiento.valor) > 0){
+            // row.classList.add("table-success");
+            valor.style.color = 'green';
+        }else{
+            // row.classList.add("table-danger");
+            valor.style.color = 'red';
+        }
     }
 }
 
