@@ -1,0 +1,56 @@
+<div class="form-row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Listado de Motivos</h3>
+                </div>
+                <div class="panel-body">
+                    <table id="tablaMotivos" class="footable table table-stripped toggle-arrow-tiny no-borders">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Motivo</th>
+                                <th class="text-center">Categoria Movimiento</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyMotivos">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    var arrMotivoMovimientoJSON = <?= $arrMotivoMovimientoJSON; ?>;
+
+
+    function dibujarTablaMotivos(){
+        $('#bodyMotivos').find('tr').remove();
+        
+        for (var i = 0; i < arrMotivoMovimientoJSON.length; i++)
+        {
+            var motivo = arrMotivoMovimientoJSON[i];
+            var body = document.getElementById("bodyMotivos");
+            var row = body.insertRow();
+            
+            row.id = i;
+            
+            var motivoFila = row.insertCell(0);
+            var categoria = row.insertCell(1);
+            var acciones = row.insertCell(2);
+            
+            motivoFila.innerHTML = motivo.descripcion;
+            if (motivo.categoriaMovimiento != ""){
+                categoria.innerHTML = motivo.categoriaMovimiento.descripcion;
+            }else{
+                categoria.innerHTML = "";
+            }
+        }
+    }
+
+    $(document).ready(function (e) {
+        dibujarTablaMotivos();
+    });
+</script>

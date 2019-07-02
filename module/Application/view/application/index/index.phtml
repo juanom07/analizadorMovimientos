@@ -53,7 +53,7 @@ function dibujarTablaMovimientos(){
         motivo.innerHTML = movimiento.motivoMovimiento.descripcion;
         detalle.innerHTML = movimiento.descripcion;
         valor.innerHTML = movimiento.valor;
-
+        
         if (parseFloat(movimiento.valor) > 0){
             // row.classList.add("table-success");
             valor.style.color = 'green';
@@ -77,20 +77,14 @@ $(document).ready(function (e) {
             cache: false,
             processData:false,
             beforeSend : function(){
-                //$("#preview").fadeOut();
-                $("#err").fadeOut();
+                //ANTES DE ENVIAR
             },
             success: function(data){
-                if(data=='invalid'){
-                    // invalid file format.
-                    $("#err").html("Invalid File !").fadeIn();
-                }else{
-                    arrMovimientosJSON = jQuery.parseJSON(data);
-                    dibujarTablaMovimientos();
-                }
+                arrMovimientosJSON = jQuery.parseJSON(data);
+                dibujarTablaMovimientos();
             },
             error: function(e) {
-                $("#err").html(e).fadeIn();
+                //Error
             }          
         });
     }));

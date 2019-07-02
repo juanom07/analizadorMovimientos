@@ -20,9 +20,19 @@ class TipoMovimiento
      */
     protected $descripcion;
 
+    /**
+     * @ORM\Column(name="color")
+     */
+    protected $color;
+
     public function setdescripcion($descripcion)
     {
         $this->descripcion = $descripcion;
+    }
+
+    public function setColor($color)
+    {
+        $this->color = $color;
     }
 
     public function getId()
@@ -35,11 +45,17 @@ class TipoMovimiento
         return $this->descripcion;
     }
 
+    public function getColor()
+    {
+        return $this->color;
+    }
+
 
     public function getJSON(){
         $output = "";
         $output .= '"id": "' . $this->getId() .'", ';
-        $output .= '"descripcion": "' . $this->getDescripcion() .'"';
+        $output .= '"descripcion": "' . $this->getDescripcion() .'", ';
+        $output .= '"color": "' . $this->getColor() .'"';
         
         return '{' . $output . '}';
     }

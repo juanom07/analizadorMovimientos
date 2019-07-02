@@ -15,7 +15,7 @@ return [
     'router' => [
         'routes' => [
             'home' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -24,13 +24,31 @@ return [
                     ],
                 ],
             ],
-            'application' => [
+            'conf' => [
                 'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/application[/:action]',
+                    'route'    => '/conf',
                     'defaults' => [
-                        'controller' => Controller\IndexController::class,
+                        'controller' => Controller\ConfController::class,
                         'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'motivosMovimiento' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/motivosMovimiento[/:action[/:id]]',
+                            'defaults' => [
+                                'controller' => Controller\ConfController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'constraints' => [
+                            'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            'id' => '[a-zA-Z0-9_-]*',
+                        ],
+                        'may_terminate' => true,
                     ],
                 ],
             ],
@@ -39,6 +57,7 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+            Controller\ConfController::class => Controller\Factory\ConfControllerFactory::class
         ],
     ],
     'service_manager' => [
