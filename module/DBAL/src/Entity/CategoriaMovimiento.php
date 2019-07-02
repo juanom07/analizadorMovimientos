@@ -16,7 +16,7 @@ class CategoriaMovimiento
     protected $id;
 
     /**
-     * @ORM\Column(name="descripcion")
+     * @ORM\Column(name="descripcion", type="string")
      */
     protected $descripcion;
 

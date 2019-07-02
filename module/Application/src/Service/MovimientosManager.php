@@ -30,6 +30,22 @@ class MovimientosManager {
     }
 
     /**
+     * Un reemplazo sin sentido, es agregar el simbolo '@' en el final de la cadena.
+     *
+     * @param [type] $cadena
+     * @return void
+     */
+    private function controlReemplazoSinSentido($cadena){
+        $arrString = explode('@', $cadena);
+
+        if ($arrString[1] != ''){
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Como esta compuesta la fila de datos?
      * 'A' => Fecha del movimiento
      * 'B' => Sucursal del banco
@@ -56,15 +72,16 @@ class MovimientosManager {
             $nuevoString = preg_replace("/\s\s+/", '@', $detalle, 1);
         }
 
-        if ($nuevoString == '' && preg_match("/TARJ/", $detalle)){
+        if (($nuevoString == '' || $this->controlReemplazoSinSentido($nuevoString)) && strpos($detalle, 'TARJ') !== false){
             //Si no tiene dos espacios consecutivos y si tiene la palabra TARJ
             //Entonces separo el texto en ese lugar
-            $nuevoString = preg_replace("/TARJ/", '@TARJ', $detalle, 1);
+            $nuevoString = str_replace('TARJ', '@TARJ', $detalle);
         }
 
         //Divido el arreglo para que quede:
         //[0] => Descripcion del motivo del movimiento
         //[1] => Detalle del movimiento
+        //[2] => '' --> Ocasionalmente
         $arrStrings = explode('@', $nuevoString);
 
         if (count($arrStrings) > 1){
@@ -72,7 +89,7 @@ class MovimientosManager {
 
             if (!isset($motivoMovimiento)){
                 $motivoMovimiento = new MotivoMovimiento();
-                $motivoMovimiento->setDescripcion($arrStrings[0]);
+                $motivoMovimiento->setDescripcion(trim($arrStrings[0]));
 
                 $this->entityManager->persist($motivoMovimiento);
                 $this->entityManager->flush();
@@ -80,12 +97,12 @@ class MovimientosManager {
 
             $formato = 'd/m/Y H:i';
             $fecha = \DateTime::createFromFormat($formato, $fechaOriginal);
-
+            
             $Movimiento = new Movimiento();
-            $Movimiento->setFecha($fecha);
+            $Movimiento->setFecha($fecha->format('Y-m-d\TH:i:s'));
             $Movimiento->setMotivoMovimiento($motivoMovimiento);
             $Movimiento->setValor($valor);
-            $Movimiento->setDescripcion($arrStrings[1]);
+            $Movimiento->setDescripcion(trim($arrStrings[1]));
 
             $this->entityManager->persist($Movimiento);
             $this->entityManager->flush();

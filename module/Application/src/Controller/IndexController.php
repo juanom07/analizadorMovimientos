@@ -27,6 +27,13 @@ class IndexController extends AbstractActionController
             $files = $this->params()->fromFiles();
 
             $this->movimientosManager->procesarArchivoExcel($files['archivo']['tmp_name']);
+            $arrMovimientosJSON = $this->catalogoManager->getArrEntidadJSON('Movimiento');
+            $view = new ViewModel([
+                'mostrarJson' => $arrMovimientosJSON
+            ]);
+            $view->setTerminal(true);
+            $view->setTemplate('application/index/mostrarJSON.phtml');
+            return $view;
         }
 
         $arrMovimientosJSON = $this->catalogoManager->getArrEntidadJSON('Movimiento');

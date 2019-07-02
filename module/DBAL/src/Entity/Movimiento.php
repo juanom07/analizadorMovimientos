@@ -16,7 +16,7 @@ class Movimiento
     protected $id;
 
     /**
-     * @ORM\Column(name="descripcion")
+     * @ORM\Column(name="descripcion", type="string")
      */
     protected $descripcion;
 
@@ -28,7 +28,7 @@ class Movimiento
 
 
     /**
-     * @ORM\Column(name="valor")
+     * @ORM\Column(name="valor", type="float")
      */
     protected $valor;
 
