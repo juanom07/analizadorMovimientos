@@ -1,0 +1,138 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Ejemplo de movimiento</h3>
+            </div>
+            <div class="card-body">
+                <table id="tablaMotivos" class="footable table table-stripped toggle-arrow-tiny no-borders">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Motivo</th>
+                            <th class="text-center">Detalle</th>
+                            <th class="text-center">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyMotivos">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Asignación de Categoria</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" id="formMotivoMovimiento" name="formMotivoMovimiento">
+                    <div class="form-row">
+                        <div class="col-md-2">
+                            <label for="">Descripción:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="DescMotivo" name="" class="form-control" disabled="true" value="">
+                        </div>
+                        <div class="col-md-1 offset-1">
+                            <label for="">Categoria:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="selectIdCategoriaMov" name="selectIdCategoriaMov" class="form-control">
+                                                    
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="form-row mt-3">
+            <div class="col-md-1">
+                <a href="<?= $this->url("conf/motivosMovimiento", ["action" => "listarMotivos"]) ?>">
+                    <div class="btn btn-default">
+                        Volver
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-1 offset-10">
+                <div class="btn btn-primary" onClick="document.forms['formMotivoMovimiento'].submit();">
+                    Guardar
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var arrCategoriaMovimientoJSON = <?= $arrCategoriaMovimientoJSON; ?>;
+    var movimientoJSON = <?= $movimientoJSON; ?>;
+    var motivoMovimientoJSON = <?= $motivoMovimientoJSON; ?>;
+
+    function dibujarMovimientoDeEjemplo(){
+        if (movimientoJSON != ''){
+            $('#bodyMotivos').find('tr').remove();
+        
+            var body = document.getElementById("bodyMotivos");
+            var row = body.insertRow();
+            
+            var fecha = row.insertCell(0);
+            var motivo = row.insertCell(1);
+            var detalle = row.insertCell(2);
+            var valor = row.insertCell(3);
+            
+            fecha.innerHTML = movimientoJSON.fecha.substring(0,16);
+            fecha.classList.add("text-center");
+            motivo.innerHTML = movimientoJSON.motivoMovimiento.descripcion;
+            motivo.classList.add("text-center");
+            detalle.innerHTML = movimientoJSON.descripcion;
+            detalle.classList.add("text-center");
+            valor.innerHTML = movimientoJSON.valor;
+            valor.classList.add("text-center");
+            
+            if (parseFloat(movimientoJSON.valor) > 0){
+                valor.style.color = 'green';
+            }else{
+                valor.style.color = 'red';
+            }
+        }
+    }
+
+    function agregarOptionAlSelect(categoria){
+        var option = $("<option></option>")
+                            .attr("value", categoria.id)
+                            .text(categoria.descripcion);
+        $('#selectIdCategoriaMov').append(option);
+    }
+
+    function dibujarSelectCategorias(){
+        $('#selectIdCategoriaMov')
+            .find('option')
+            .remove();
+        $('#selectIdCategoriaMov')
+            .append($("<option></option>")
+                .attr("value", -1)
+                .text('-- Seleccione --'));
+        
+        for (var i = 0; i < arrCategoriaMovimientoJSON.length; i++){
+            var categoria = arrCategoriaMovimientoJSON[i];
+
+            if (parseFloat(movimientoJSON.valor) > 0){
+                if (categoria.tipoMovimiento.id == '1'){
+                    agregarOptionAlSelect(categoria);
+                }
+            }else{
+                if (categoria.tipoMovimiento.id == '2'){
+                    agregarOptionAlSelect(categoria);
+                }
+            }
+        }
+    }
+
+    $(document).ready(function (e) {
+        dibujarMovimientoDeEjemplo();
+        $('#DescMotivo').val(motivoMovimientoJSON.descripcion);
+        dibujarSelectCategorias();
+
+        if (motivoMovimientoJSON.categoriaMovimiento != ''){
+            $('#selectIdCategoriaMov').val(motivoMovimientoJSON.categoriaMovimiento.id).change();
+        }
+    });
+</script>

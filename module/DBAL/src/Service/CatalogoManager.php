@@ -22,7 +22,7 @@ class CatalogoManager {
         if ($idTipoMovimiento){
             $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findOneBy(['id' => $idTipoMovimiento]);
         }else{
-            $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findAll();
+            $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
         }
         return $TipoMovimiento;
     }
@@ -31,7 +31,7 @@ class CatalogoManager {
         if ($idCategoriaMovimiento){
             $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findOneBy(['id' => $idCategoriaMovimiento]);
         }else{
-            $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findAll();
+            $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
         }
         return $CategoriaMovimiento;
     }
@@ -40,7 +40,7 @@ class CatalogoManager {
         if ($idMotivoMovimiento){
             $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findOneBy(['id' => $idMotivoMovimiento]);
         }else{
-            $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findAll();
+            $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
         }
         return $MotivoMovimiento;
     }
@@ -91,6 +91,19 @@ class CatalogoManager {
         return $MotivoMovimiento;
     }
 
+    /**
+     * Funcion que retorna un Movimiento para ser mostrado como ejemplo.
+     * Se utiliza en la vinculación del motivo del movimiento con su categoria.
+     * Le permite al administrador ver el detalle del movimiento y poder tomar una desición.
+     *
+     * @param [MotivoMovimiento] $MotivoMovimiento
+     * @return Movimiento | null
+     */
+    public function getMovimientoDeEjemplo($MotivoMovimiento){
+        $Movimiento = $this->entityManager->getRepository(Movimiento::class)->findOneBy(['MotivoMovimiento' => $MotivoMovimiento]);
+
+        return $Movimiento;
+    }
     
     /**
      * LA CREACION Y MODIFICACION DE LAS ENTIDADES MOVERLAS LUEGO A UN MANAGER DIFERENTE

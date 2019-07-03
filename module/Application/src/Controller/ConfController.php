@@ -12,11 +12,11 @@ use Zend\View\Model\ViewModel;
 
 class ConfController extends AbstractActionController
 {
-    // private $movimientosManager;
+    private $movimientosManager;
     private $catalogoManager;
 
-    public function __construct($catalogoManager) {
-        // $this->movimientosManager = $movimientosManager;
+    public function __construct($catalogoManager, $movimientosManager) {
+        $this->movimientosManager = $movimientosManager;
         $this->catalogoManager = $catalogoManager;
     }
 
@@ -26,7 +26,7 @@ class ConfController extends AbstractActionController
         return new ViewModel();
     }
 
-    public function motivosMovimientoAction(){
+    public function listarMotivosAction(){
         
         $arrMotivoMovimientoJSON = $this->catalogoManager->getArrEntidadJSON('MotivoMovimiento');
         return new ViewModel([
@@ -34,18 +34,22 @@ class ConfController extends AbstractActionController
         ]);
     }
 
-    public function editarAction(){
+    public function editarMotivoAction(){
         $parametros = $this->params()->fromRoute();
         $idMotivoMovimiento = $parametros['id'];
         $MotivoMovimiento = $this->catalogoManager->getMotivoMovimiento($idMotivoMovimiento);
 
         if ($this->getRequest()->isPost()) {
-            //procesar el guardado de la info
+            $data = $this->params()->fromPost();
+            $this->movimientosManager->actualizarCategoriaDeMotivoMovimiento($MotivoMovimiento, $data['selectIdCategoriaMov']);
+            $this->redirect()->toRoute("conf/motivosMovimiento", ["action" => "listarMotivos"]);
         }
 
+        $MovimientoEjemplo = $this->catalogoManager->getMovimientoDeEjemplo($MotivoMovimiento);
         $arrCategoriaMovimiento = $this->catalogoManager->getArrEntidadJSON('CategoriaMovimiento');
         return new ViewModel([
-            'MotivoMovimiento' => $MotivoMovimiento,
+            'motivoMovimientoJSON' => $MotivoMovimiento->getJSON(),
+            'movimientoJSON' => ($MovimientoEjemplo) ? $MovimientoEjemplo->getJSON() : "''",
             'arrCategoriaMovimientoJSON' => $arrCategoriaMovimiento
         ]);
     }

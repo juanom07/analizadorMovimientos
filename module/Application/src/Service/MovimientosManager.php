@@ -110,9 +110,14 @@ class MovimientosManager {
             //Fallo al reconocer el movimiento
             return null;
         }
-        
-        
-
     }
 
+    public function actualizarCategoriaDeMotivoMovimiento($MotivoMovimiento, $IdCategoriaMov){
+        $CategoriaMovimiento = $this->catalogoManager->getCategoriaMovimiento($IdCategoriaMov);
+
+        $MotivoMovimiento->setCategoriaMovimiento($CategoriaMovimiento);
+
+        $this->entityManager->persist($MotivoMovimiento);
+        $this->entityManager->flush();
+    }
 }

@@ -1,0 +1,82 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="">Listado de Motivos</h3>
+            </div>
+            <div class="card-body">
+                <table id="tablaMotivos" class="footable table table-stripped toggle-arrow-tiny no-borders">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Motivo</th>
+                            <th class="text-center">Categoria Movimiento</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyMotivos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var arrMotivoMovimientoJSON = <?= $arrMotivoMovimientoJSON; ?>;
+
+    function dibujarTablaMotivos(){
+        $('#bodyMotivos').find('tr').remove();
+        
+        for (var i = 0; i < arrMotivoMovimientoJSON.length; i++)
+        {
+            var motivo = arrMotivoMovimientoJSON[i];
+            var body = document.getElementById("bodyMotivos");
+            var row = body.insertRow();
+            
+            row.id = i;
+            
+            var motivoFila = row.insertCell(0);
+            var categoria = row.insertCell(1);
+            var acciones = row.insertCell(2);
+            
+            motivoFila.innerHTML = motivo.descripcion;
+            if (motivo.categoriaMovimiento != ""){
+                categoria.innerHTML = motivo.categoriaMovimiento.descripcion;
+            }else{
+                categoria.innerHTML = "";
+            }
+
+            dibujarAccionesDeMotivo(acciones, motivo);
+        }
+    }
+
+    function agregarBotonEditar(contenedor, motivo){
+        var icon = document.createElement('i');
+        icon.setAttribute('class','fas fa-pencil-alt');
+        var a = document.createElement('a');
+        a.setAttribute('class','btn btn-success btn-circle btn-outline');
+        a.setAttribute('href', url + '/conf/motivosMovimiento/editarMotivo/'+ motivo.id);
+        a.appendChild(icon);
+        contenedor.appendChild(a);
+        contenedor.setAttribute('title', 'Editar Motivo Movimiento');
+    }
+
+
+    function dibujarAccionesDeMotivo(contenedor, motivo){
+        var divFila = document.createElement('div');
+        divFila.setAttribute('class','form-row');
+        // Agrega boton de editar
+        var divPDF = document.createElement('div');
+        divPDF.setAttribute('class','col-md-4');
+        
+        agregarBotonEditar(divPDF, motivo);
+        divFila.appendChild(divPDF);
+        
+        //Fin de agregar botones
+        contenedor.appendChild(divFila);
+    }
+
+    $(document).ready(function (e) {
+        dibujarTablaMotivos();
+    });
+</script>
