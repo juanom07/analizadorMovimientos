@@ -77,7 +77,7 @@ class MovimientosManager {
         //[1] => Detalle del movimiento
         //[2] => '' --> Ocasionalmente
         $arrStrings = explode('@', $nuevoString);
-        return $arrString;
+        return $arrStrings;
     }
 
     /**
@@ -107,12 +107,68 @@ class MovimientosManager {
 
             $formato = 'd/m/Y H:i';
             $fecha = \DateTime::createFromFormat($formato, $fechaOriginal);
-            
-            $this->nuevoMovimiento($fecha, $motivoMovimiento, $descripcion, $valor);
+
+            if (!$this->existeMovimientoCargado($fecha, $motivoMovimiento, $arrStrings[1], $valor)){
+                $this->nuevoMovimiento($fecha, $motivoMovimiento, $arrStrings[1], $valor);
+            }
         }else{
             //Fallo al reconocer el movimiento
             return null;
         }
+    }
+
+    /**
+     * Esta funcion determina si un movimiento es igual a los datos
+     * de uno que se está por cargar. Sirve para que no se carguen dos veces
+     * los mismos movimientos cuando se hace una importacion.
+     * 
+     * No se compran las fechas, porque anteriormente se recuperaron todos los
+     * movimientos registrados en esa fecha.
+     *
+     * @param [Movimiento] $Movimiento
+     * @param [MotivoMovimiento] $MotivoMovimiento
+     * @param [String] $descripcion
+     * @param [String] $valor
+     * @return boolean
+     */
+    private function esElMismoMovimiento($Movimiento, $MotivoMovimiento, $descripcion, $valor){
+        if ($Movimiento->getValor() != $valor){
+            return false;
+        }
+
+        if ($Movimiento->getMotivoMovimiento()->getId() != $MotivoMovimiento->getId()){
+            return false;
+        }
+
+        if ($Movimiento->getDescripcion() != trim($descripcion)){
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Funcion para determinar si los datos del movimiento que se esta por guardar
+     * en la base, no se encuentran previamente almacenados ya.
+     * 
+     * Comienza recuperando todos los movimientos de la base que tengan la misma fecha.
+     *
+     * @param [datetime] $fecha
+     * @param [MotivoMovimiento] $motivoMovimiento
+     * @param [String] $descripcion
+     * @param [String] $valor
+     * @return void
+     */
+    private function existeMovimientoCargado($fecha, $MotivoMovimiento, $descripcion, $valor){
+        $arrMovimientos = $this->catalogoManager->getMovimientosPorFecha($fecha);
+
+        foreach($arrMovimientos as $Movimiento){
+            if ($this->esElMismoMovimiento($Movimiento, $MotivoMovimiento, $descripcion, $valor)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Se pueden mover al manager de catalogo lo que sigue de acá para abajo

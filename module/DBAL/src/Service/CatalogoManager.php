@@ -104,6 +104,19 @@ class CatalogoManager {
 
         return $Movimiento;
     }
+
+    /**
+     * Esta funcion busca el/los movimientos que existan cargados en la base con una determinada fecha.
+     * Se utiliza para evitar la duplicación de movimientos a la hora de levantar el archivo de importación.
+     *
+     * @param [datetime] $fecha
+     * @return array
+     */
+    public function getMovimientosPorFecha($fecha){
+        $Movimientos = $this->entityManager->getRepository(Movimiento::class)->findBy(['fecha' => $fecha->format('Y-m-d\TH:i:s')]);
+
+        return $Movimientos;
+    }
     
     /**
      * LA CREACION Y MODIFICACION DE LAS ENTIDADES MOVERLAS LUEGO A UN MANAGER DIFERENTE
