@@ -50,6 +50,21 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'categoriaMovimiento' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/categoriaMovimiento[/:action[/:id]]',
+                            'defaults' => [
+                                'controller' => Controller\ConfController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'constraints' => [
+                            'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            'id' => '[a-zA-Z0-9_-]*',
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
         ],

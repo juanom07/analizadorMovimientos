@@ -31,3 +31,9 @@ div.container a.navbar-brand > img {
     margin-right: 4px;
     margin-top: -2px;
 }
+
+.obligatorio {
+    color: #f00;
+    font-weight: bold;
+    font-size: 8pt;
+}

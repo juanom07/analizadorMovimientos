@@ -27,8 +27,8 @@ class ConfController extends AbstractActionController
     }
 
     public function listarMotivosAction(){
-        
         $arrMotivoMovimientoJSON = $this->catalogoManager->getArrEntidadJSON('MotivoMovimiento');
+
         return new ViewModel([
             'arrMotivoMovimientoJSON' => $arrMotivoMovimientoJSON
         ]);
@@ -51,6 +51,32 @@ class ConfController extends AbstractActionController
             'motivoMovimientoJSON' => $MotivoMovimiento->getJSON(),
             'movimientoJSON' => ($MovimientoEjemplo) ? $MovimientoEjemplo->getJSON() : "''",
             'arrCategoriaMovimientoJSON' => $arrCategoriaMovimiento
+        ]);
+    }
+
+    public function listarCategoriasAction(){
+        $arrCategoriaMovimientoJSON = $this->catalogoManager->getArrEntidadJSON('CategoriaMovimiento');
+        
+        return new ViewModel([
+            'arrCategoriaMovimientoJSON' => $arrCategoriaMovimientoJSON
+        ]);
+    }
+
+    public function editarCategoriaAction(){
+        $parametros = $this->params()->fromRoute();
+        $idCategoriaMovimiento = $parametros['id'];
+        $CategoriaMovimiento = $this->catalogoManager->getCategoriaMovimiento($idCategoriaMovimiento);
+
+        if ($this->getRequest()->isPost()) {
+            $data = $this->params()->fromPost();
+            $this->movimientosManager->actualizarCategoria($CategoriaMovimiento, $data);
+            $this->redirect()->toRoute("conf/categoriaMovimiento", ["action" => "listarCategorias"]);
+        }
+
+        $arrTipoMovimientoJSON = $this->catalogoManager->getArrEntidadJSON('TipoMovimiento');
+        return new ViewModel([
+            'categoriaMovimientoJSON' => $CategoriaMovimiento->getJSON(),
+            'arrTipoMovimientoJSON' => $arrTipoMovimientoJSON
         ]);
     }
 }

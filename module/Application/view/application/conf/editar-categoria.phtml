@@ -1,0 +1,81 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Edición de Categoria</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" id="formCatMovimiento" name="formCatMovimiento">
+                    <div class="form-row">
+                        <div class="col-md-2">
+                            <label for=""><span class="obligatorio">(*) </span>Descripción:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="DescCategoria" name="DescCategoria" class="form-control" value="" required="true">
+                        </div>
+                        <div class="col-md-2 offset-1">
+                            <label for=""><span class="obligatorio">(*) </span>Tipo de Movimiento:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="selectIdTipoMov" name="selectIdTipoMov" class="form-control" required="true">
+                                                    
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="form-row mt-3">
+            <div class="col-md-1">
+                <a href="<?= $this->url("conf/categoriaMovimiento", ["action" => "listarCategorias"]) ?>">
+                    <div class="btn btn-default">
+                        Volver
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-1 offset-10">
+                <div class="btn btn-primary" onClick="preSubmit();">
+                    Guardar
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var arrTipoMovimientoJSON = <?= $arrTipoMovimientoJSON; ?>;
+    var categoriaMovimientoJSON = <?= $categoriaMovimientoJSON; ?>;
+
+    function preSubmit(){
+        if ($("#formCatMovimiento")[0].checkValidity()){
+            $("#formCatMovimiento").submit();
+        }else{
+            $("#formCatMovimiento")[0].reportValidity();
+        }
+    }
+
+    function dibujarSelectTipoMovimiento(){
+        $('#selectIdTipoMov')
+            .find('option')
+            .remove();
+        $('#selectIdTipoMov')
+            .append($("<option></option>")
+                .attr("value", '')
+                .text('-- Seleccione --'));
+        
+        for (var i = 0; i < arrTipoMovimientoJSON.length; i++){
+            var tipoMovimiento = arrTipoMovimientoJSON[i];
+
+            var option = $("<option></option>")
+                            .attr("value", tipoMovimiento.id)
+                            .text(tipoMovimiento.descripcion);
+            
+            $('#selectIdTipoMov').append(option);
+        }
+    }
+
+    $(document).ready(function (e) {
+        $('#DescCategoria').val(categoriaMovimientoJSON.descripcion);
+        dibujarSelectTipoMovimiento();
+        $('#selectIdTipoMov').val(categoriaMovimientoJSON.tipoMovimiento.id).change();
+    });
+</script>

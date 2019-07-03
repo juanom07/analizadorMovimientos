@@ -120,4 +120,14 @@ class MovimientosManager {
         $this->entityManager->persist($MotivoMovimiento);
         $this->entityManager->flush();
     }
+
+    public function actualizarCategoria($CategoriaMovimiento, $dataPost){
+        $TipoMovimiento = $this->catalogoManager->getTipoMovimiento($dataPost['selectIdTipoMov']);
+
+        $CategoriaMovimiento->setDescripcion($dataPost['DescCategoria']);
+        $CategoriaMovimiento->setTipoMovimiento($TipoMovimiento);
+
+        $this->entityManager->persist($CategoriaMovimiento);
+        $this->entityManager->flush();
+    }
 }

@@ -1,0 +1,80 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="">Listado de Categorias</h3>
+            </div>
+            <div class="card-body">
+                <table id="tablaCategorias" class="footable table table-stripped toggle-arrow-tiny no-borders">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Categoria Movimiento</th>
+                            <th class="text-center">Tipo de Movimiento</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyCategorias">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var arrCategoriaMovimientoJSON = <?= $arrCategoriaMovimientoJSON; ?>;
+
+    function dibujarTablaCategorias(){
+        $('#bodyCategorias').find('tr').remove();
+        
+        for (var i = 0; i < arrCategoriaMovimientoJSON.length; i++)
+        {
+            var categoria = arrCategoriaMovimientoJSON[i];
+            var body = document.getElementById("bodyCategorias");
+            var row = body.insertRow();
+            
+            row.id = i;
+            
+            var descripcion = row.insertCell(0);
+            descripcion.classList.add("text-center");
+            var tipoMovimiento = row.insertCell(1);
+            tipoMovimiento.classList.add("text-center");
+            var acciones = row.insertCell(2);
+
+            descripcion.innerHTML = categoria.descripcion;
+            tipoMovimiento.innerHTML = categoria.tipoMovimiento.descripcion;
+
+            dibujarAccionesDeCategoria(acciones, categoria);
+        }
+    }
+
+    function agregarBotonEditar(contenedor, categoria){
+        var icon = document.createElement('i');
+        icon.setAttribute('class','fas fa-pencil-alt');
+        var a = document.createElement('a');
+        a.setAttribute('class','btn btn-success btn-circle btn-outline');
+        a.setAttribute('href', url + '/conf/categoriaMovimiento/editarCategoria/'+ categoria.id);
+        a.appendChild(icon);
+        contenedor.appendChild(a);
+        contenedor.setAttribute('title', 'Editar Categoria Movimiento');
+    }
+
+
+    function dibujarAccionesDeCategoria(contenedor, categoria){
+        var divFila = document.createElement('div');
+        divFila.setAttribute('class','form-row');
+        // Agrega boton de editar
+        var divPDF = document.createElement('div');
+        divPDF.setAttribute('class','col-md-4 offset-8');
+        
+        agregarBotonEditar(divPDF, categoria);
+        divFila.appendChild(divPDF);
+        
+        //Fin de agregar botones
+        contenedor.appendChild(divFila);
+    }
+
+    $(document).ready(function (e) {
+        dibujarTablaCategorias();
+    });
+</script>
