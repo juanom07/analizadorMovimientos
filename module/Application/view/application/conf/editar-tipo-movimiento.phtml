@@ -1,0 +1,49 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Edición de Tipo de Movimiento</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" id="formTipoMovimiento" name="formTipoMovimiento">
+                    <div class="form-row">
+                        <div class="col-md-2">
+                            <label for=""><span class="obligatorio">(*) </span>Descripción:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="DescTipoMovimiento" name="DescTipoMovimiento" class="form-control" required="true">
+                        </div>
+                        <div class="col-md-2 offset-1">
+                            <label for=""><span class="obligatorio">(*) </span>Color del Valor:</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="DescColor" name="DescColor" class="form-control" required="true">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="form-row mt-3">
+            <div class="col-md-1">
+                <a href="<?= $this->url("conf/tiposMovimiento", ["action" => "listarTiposMovimiento"]) ?>">
+                    <div class="btn btn-default">
+                        Volver
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-1 offset-10">
+                <div class="btn btn-primary" onClick="document.forms['formTipoMovimiento'].submit();">
+                    Guardar
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var tipoMovimientoJSON = <?= $tipoMovimientoJSON; ?>;
+
+    $(document).ready(function (e) {
+        $('#DescTipoMovimiento').val(tipoMovimientoJSON.descripcion);
+        $('#DescColor').val(tipoMovimientoJSON.color);
+    });
+</script>

@@ -79,4 +79,28 @@ class ConfController extends AbstractActionController
             'arrTipoMovimientoJSON' => $arrTipoMovimientoJSON
         ]);
     }
+
+    public function listarTiposMovimientoAction(){
+        $arrTipoMovimientoJSON = $this->catalogoManager->getArrEntidadJSON('TipoMovimiento');
+        
+        return new ViewModel([
+            'arrTipoMovimientoJSON' => $arrTipoMovimientoJSON
+        ]);
+    }
+
+    public function editarTipoMovimientoAction(){
+        $parametros = $this->params()->fromRoute();
+        $idTipoMovimiento = $parametros['id'];
+        $TipoMovimiento = $this->catalogoManager->getTipoMovimiento($idTipoMovimiento);
+
+        if ($this->getRequest()->isPost()) {
+            $data = $this->params()->fromPost();
+            $this->movimientosManager->actualizarTipoMovimiento($TipoMovimiento, $data);
+            $this->redirect()->toRoute("conf/tiposMovimiento", ["action" => "listarTiposMovimiento"]);
+        }
+
+        return new ViewModel([
+            'tipoMovimientoJSON' => $TipoMovimiento->getJSON()
+        ]);
+    }
 }

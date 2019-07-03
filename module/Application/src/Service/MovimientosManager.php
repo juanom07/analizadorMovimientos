@@ -130,4 +130,12 @@ class MovimientosManager {
         $this->entityManager->persist($CategoriaMovimiento);
         $this->entityManager->flush();
     }
+
+    public function actualizarTipoMovimiento($TipoMovimiento, $dataPost){
+        $TipoMovimiento->setDescripcion($dataPost['DescTipoMovimiento']);
+        $TipoMovimiento->setColor($dataPost['DescColor']);
+
+        $this->entityManager->persist($TipoMovimiento);
+        $this->entityManager->flush();
+    }
 }

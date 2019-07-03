@@ -65,6 +65,21 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'tiposMovimiento' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/tiposMovimiento[/:action[/:id]]',
+                            'defaults' => [
+                                'controller' => Controller\ConfController::class,
+                                'action'     => 'index',
+                            ],
+                        ],
+                        'constraints' => [
+                            'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            'id' => '[a-zA-Z0-9_-]*',
+                        ],
+                        'may_terminate' => true,
+                    ],
                 ],
             ],
         ],

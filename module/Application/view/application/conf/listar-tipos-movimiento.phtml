@@ -1,0 +1,81 @@
+<div class="form-row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="">Listado de Tipos de Movimiento</h3>
+            </div>
+            <div class="card-body">
+                <table id="tablaTiposMov" class="footable table table-stripped toggle-arrow-tiny no-borders">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Tipo de Movimiento</th>
+                            <th class="text-center">Color del Valor</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyTiposMov">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var arrTipoMovimientoJSON = <?= $arrTipoMovimientoJSON; ?>;
+
+    function dibujarTablaTipoMovimiento(){
+        $('#bodyTiposMov').find('tr').remove();
+        
+        for (var i = 0; i < arrTipoMovimientoJSON.length; i++)
+        {
+            var tipoMovimiento = arrTipoMovimientoJSON[i];
+            var body = document.getElementById("bodyTiposMov");
+            var row = body.insertRow();
+            
+            row.id = i;
+            
+            var descripcion = row.insertCell(0);
+            descripcion.classList.add("text-center");
+            var color = row.insertCell(1);
+            color.classList.add("text-center");
+            var acciones = row.insertCell(2);
+
+            descripcion.innerHTML = tipoMovimiento.descripcion;
+            color.innerHTML = tipoMovimiento.color;
+            color.style.color = tipoMovimiento.color
+
+            dibujarAccionesDeTipoMovimiento(acciones, tipoMovimiento);
+        }
+    }
+
+    function agregarBotonEditar(contenedor, tipoMovimiento){
+        var icon = document.createElement('i');
+        icon.setAttribute('class','fas fa-pencil-alt');
+        var a = document.createElement('a');
+        a.setAttribute('class','btn btn-success btn-circle btn-outline');
+        a.setAttribute('href', url + '/conf/tiposMovimiento/editarTipoMovimiento/'+ tipoMovimiento.id);
+        a.appendChild(icon);
+        contenedor.appendChild(a);
+        contenedor.setAttribute('title', 'Editar Tipo de Movimiento');
+    }
+
+
+    function dibujarAccionesDeTipoMovimiento(contenedor, tipoMovimiento){
+        var divFila = document.createElement('div');
+        divFila.setAttribute('class','form-row');
+        // Agrega boton de editar
+        var divPDF = document.createElement('div');
+        divPDF.setAttribute('class','col-md-4 offset-8');
+        
+        agregarBotonEditar(divPDF, tipoMovimiento);
+        divFila.appendChild(divPDF);
+        
+        //Fin de agregar botones
+        contenedor.appendChild(divFila);
+    }
+
+    $(document).ready(function (e) {
+        dibujarTablaTipoMovimiento();
+    });
+</script>
