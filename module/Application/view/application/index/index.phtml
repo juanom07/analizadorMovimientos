@@ -69,6 +69,12 @@
                 </table>
             </div>
         </div>
+        <div class="form-row">
+            <div class="col-md-12">
+                <div id="piechart" style="height: 500px;"></div>
+            </div>
+        </div>
+        
     </div>
 </div>
 
@@ -178,18 +184,25 @@ $(document).ready(function (e) {
     });
 
     
+    
+
 });
 
     var fechaInicialSelec = '';
     var fechaFinalSelec = '';
+    var arrMovEnPeriodo = [];
+    var arrMovEnPeriodo = [];
+    var cantidadesMovimiento = {};
+    //Dibujo de graficos
+    //https://developers.google.com/chart/interactive/docs/gallery/piechart
+
+    google.charts.load('current', {'packages':['corechart']});
 
 $('#fechas').on('apply.daterangepicker', function(ev, picker) {
-        console.log(picker.startDate.format('YYYY-MM-DD'));
-        console.log(picker.endDate);
-        var fecha = moment("12/06/2019", "DD/MM/YYYY");
-        console.log(picker.startDate.diff(fecha)); //Devuelve negativo si la fecha es mayor
-        console.log(picker.endDate.diff(fecha)); //Devuelve positivo si la fecha es menor
-        dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
+    var fecha = moment("12/06/2019", "DD/MM/YYYY");
+    dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
+    analisarResultadosParaGrafico();
+    dibujarGraficoTorta();
 });
 
 function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
@@ -200,6 +213,7 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
         var movimiento = arrMovimientosJSON[i];
         var fechaMov = moment(movimiento.fecha.substring(0, 10), "YYYY-MM-DD");
         if ((fechaInicial.diff(fechaMov) < 0) && (fechaFinal.diff(fechaMov) > 0)){
+            arrMovEnPeriodo.push(movimiento);
             var body = document.getElementById("bodyMovimientosPeriodo");
             var row = body.insertRow();
             
@@ -225,4 +239,42 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
         }
     }
 }
+
+function analisarResultadosParaGrafico(){
+
+    for (var i = 0; i < arrMovEnPeriodo.length; i++){
+        var movimiento = arrMovEnPeriodo[i];
+        var descMotivo = movimiento.motivoMovimiento.descripcion;
+        if (cantidadesMovimiento.hasOwnProperty(descMotivo)){
+            cantidadesMovimiento[descMotivo] += parseFloat(movimiento.valor);
+        }else{
+            cantidadesMovimiento[descMotivo] = parseFloat(movimiento.valor);
+        }
+    }
+}
+
+function dibujarGraficoTorta() {
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    Object.keys(cantidadesMovimiento).forEach(function(key){
+        console.log(key + '=' + cantidadesMovimiento[key]);
+        var elemento = [key, Math.abs(cantidadesMovimiento[key])];
+
+        arrDatos.push(elemento);
+    });
+
+    var data = google.visualization.arrayToDataTable(arrDatos);
+
+    var options = {
+    title: 'Pesos $AR por Tipo de Movimiento'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
+}
+
+//Idea de separar los graficos por ingresos y gastos
 </script>
