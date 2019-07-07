@@ -70,7 +70,14 @@ class Movimiento
 
     public function getFecha()
     {
-        return $this->fecha;
+        if (is_string($this->fecha)){
+            $fecha = date("d/m/Y H:i", strtotime($this->fecha));
+            return $fecha;
+        }else{
+            return $this->fecha->format('d/m/Y H:i');
+        }
+        
+        // return $this->fecha->format('d/m/Y H:i');
     }
 
     public function getValor()

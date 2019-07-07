@@ -71,10 +71,14 @@
         </div>
         <div class="form-row">
             <div class="col-md-12">
-                <div id="piechart" style="height: 500px;"></div>
+                <div id="tortaIngresos" style="height: 500px;"></div>
             </div>
         </div>
-        
+        <div class="form-row">
+            <div class="col-md-12">
+                <div id="tortaGastos" style="height: 500px;"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -192,17 +196,18 @@ $(document).ready(function (e) {
     var fechaFinalSelec = '';
     var arrMovEnPeriodo = [];
     var arrMovEnPeriodo = [];
-    var cantidadesMovimiento = {};
+    var cantidadesMovIngresos = {};
+    var cantidadesMovGastos = {};
     //Dibujo de graficos
     //https://developers.google.com/chart/interactive/docs/gallery/piechart
 
     google.charts.load('current', {'packages':['corechart']});
 
 $('#fechas').on('apply.daterangepicker', function(ev, picker) {
-    var fecha = moment("12/06/2019", "DD/MM/YYYY");
     dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
     analisarResultadosParaGrafico();
-    dibujarGraficoTorta();
+    dibujarGraficoTortaIngresos();
+    dibujarGraficoTortaGastos();
 });
 
 function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
@@ -211,7 +216,7 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
     for (var i = 0; i < arrMovimientosJSON.length; i++)
     {
         var movimiento = arrMovimientosJSON[i];
-        var fechaMov = moment(movimiento.fecha.substring(0, 10), "YYYY-MM-DD");
+        var fechaMov = moment(movimiento.fecha.substring(0, 10), "DD/MM/YYYY");
         if ((fechaInicial.diff(fechaMov) < 0) && (fechaFinal.diff(fechaMov) > 0)){
             arrMovEnPeriodo.push(movimiento);
             var body = document.getElementById("bodyMovimientosPeriodo");
@@ -240,41 +245,81 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
     }
 }
 
+/**
+* Funcion para guardar los datos de movimientos dentro del periodo en los arreglos correspondinetes
+* Esta funcion es para mostrar las sumas totales de pesos
+* tanto para ingresos como para gastos
+*/
+function procesarCargaDeArrDeDatos(arrCantMov, movimiento){
+    var descMotivo = movimiento.motivoMovimiento.descripcion;
+
+    if (arrCantMov.hasOwnProperty(descMotivo)){
+        arrCantMov[descMotivo] += parseFloat(movimiento.valor);
+    }else{
+        arrCantMov[descMotivo] = parseFloat(movimiento.valor);
+    }
+}
+
+/**
+ * Funcion que determina cuales son los movimientos que cumplen con el
+ * periodo de tiempo seleccionado. A su vez hace una division en ingresos o gastos.
+ *
+ * @return void
+ */
 function analisarResultadosParaGrafico(){
 
     for (var i = 0; i < arrMovEnPeriodo.length; i++){
         var movimiento = arrMovEnPeriodo[i];
-        var descMotivo = movimiento.motivoMovimiento.descripcion;
-        if (cantidadesMovimiento.hasOwnProperty(descMotivo)){
-            cantidadesMovimiento[descMotivo] += parseFloat(movimiento.valor);
-        }else{
-            cantidadesMovimiento[descMotivo] = parseFloat(movimiento.valor);
+        
+        if (movimiento.motivoMovimiento.categoriaMovimiento != '' 
+            && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+            if (movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.id == '1'){
+                //Ingresos
+                procesarCargaDeArrDeDatos(cantidadesMovIngresos, movimiento);
+            }else{
+                //Gastos
+                procesarCargaDeArrDeDatos(cantidadesMovGastos, movimiento);
+            }
         }
+        
     }
 }
 
-function dibujarGraficoTorta() {
-    var arrDatos = [
-        ['Tipo de Movimiento', 'Pesos']
-    ];
+/**
+* Procesa el dibujo de un grafico de torta
+*/
+function procesarDibujarGraficoTorta(arrMovimientos, arrDatosGrafico, tituloGrafico, idDivGrafico){
+    Object.keys(arrMovimientos).forEach(function(key){
+        var elemento = [key, Math.abs(arrMovimientos[key])];
 
-    Object.keys(cantidadesMovimiento).forEach(function(key){
-        console.log(key + '=' + cantidadesMovimiento[key]);
-        var elemento = [key, Math.abs(cantidadesMovimiento[key])];
-
-        arrDatos.push(elemento);
+        arrDatosGrafico.push(elemento);
     });
 
-    var data = google.visualization.arrayToDataTable(arrDatos);
+    var data = google.visualization.arrayToDataTable(arrDatosGrafico);
 
     var options = {
-    title: 'Pesos $AR por Tipo de Movimiento'
+        title: tituloGrafico
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    var chart = new google.visualization.PieChart(document.getElementById(idDivGrafico));
 
     chart.draw(data, options);
 }
 
-//Idea de separar los graficos por ingresos y gastos
+function dibujarGraficoTortaIngresos() {
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    procesarDibujarGraficoTorta(cantidadesMovIngresos, arrDatos, 'Pesos $AR por Tipo de Ingresos', 'tortaIngresos');
+}
+
+function dibujarGraficoTortaGastos() {
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaGastos');
+}
+
 </script>
