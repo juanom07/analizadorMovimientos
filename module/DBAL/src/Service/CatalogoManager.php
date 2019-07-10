@@ -22,7 +22,7 @@ class CatalogoManager {
         if ($idTipoMovimiento){
             $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findOneBy(['id' => $idTipoMovimiento]);
         }else{
-            $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
+            $TipoMovimiento = $this->entityManager->getRepository(TipoMovimiento::class)->findBy([], ['descripcion' => 'ASC']);
         }
         return $TipoMovimiento;
     }
@@ -31,7 +31,7 @@ class CatalogoManager {
         if ($idCategoriaMovimiento){
             $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findOneBy(['id' => $idCategoriaMovimiento]);
         }else{
-            $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
+            $CategoriaMovimiento = $this->entityManager->getRepository(CategoriaMovimiento::class)->findBy([], ['descripcion' => 'ASC']);
         }
         return $CategoriaMovimiento;
     }
@@ -40,7 +40,7 @@ class CatalogoManager {
         if ($idMotivoMovimiento){
             $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findOneBy(['id' => $idMotivoMovimiento]);
         }else{
-            $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findAll([], ['descripcion' => 'ASC']);
+            $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findBy([], ['descripcion' => 'ASC']);
         }
         return $MotivoMovimiento;
     }
@@ -49,8 +49,9 @@ class CatalogoManager {
         if ($idMovimiento){
             $Movimiento = $this->entityManager->getRepository(Movimiento::class)->findOneBy(['id' => $idMovimiento]);
         }else{
-            $Movimiento = $this->entityManager->getRepository(Movimiento::class)->findAll();
+            $Movimiento = $this->entityManager->getRepository(Movimiento::class)->findBy([], ['fecha' => 'DESC']);
         }
+        
         return $Movimiento;
     }
 

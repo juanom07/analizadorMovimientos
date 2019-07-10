@@ -76,8 +76,6 @@ class Movimiento
         }else{
             return $this->fecha->format('d/m/Y H:i');
         }
-        
-        // return $this->fecha->format('d/m/Y H:i');
     }
 
     public function getValor()

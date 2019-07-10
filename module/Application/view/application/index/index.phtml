@@ -217,7 +217,7 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
     {
         var movimiento = arrMovimientosJSON[i];
         var fechaMov = moment(movimiento.fecha.substring(0, 10), "DD/MM/YYYY");
-        if ((fechaInicial.diff(fechaMov) < 0) && (fechaFinal.diff(fechaMov) > 0)){
+        if ((fechaInicial.diff(fechaMov) <= 0) && (fechaFinal.diff(fechaMov) >= 0)){
             arrMovEnPeriodo.push(movimiento);
             var body = document.getElementById("bodyMovimientosPeriodo");
             var row = body.insertRow();
@@ -235,10 +235,8 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
             valor.innerHTML = movimiento.valor;
             
             if (parseFloat(movimiento.valor) > 0){
-                // row.classList.add("table-success");
                 valor.style.color = 'green';
             }else{
-                // row.classList.add("table-danger");
                 valor.style.color = 'red';
             }
         }
