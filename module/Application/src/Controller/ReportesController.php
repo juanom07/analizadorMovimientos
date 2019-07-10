@@ -33,4 +33,14 @@ class ReportesController extends AbstractActionController
             'arrMovimientosJSON' => $arrMovimientosJSON
         ]);
     }
+
+    public function comprasDebitoAction()
+    {
+        $arrMovimientosDebito = $this->catalogoManager->getMovimientosRealizadosConDebito();
+        $arrMovimientosJSON = $this->catalogoManager->arrEntidadesAJSON($arrMovimientosDebito);
+        
+        return new ViewModel([
+            'arrMovimientosJSON' => $arrMovimientosJSON
+        ]);
+    }
 }

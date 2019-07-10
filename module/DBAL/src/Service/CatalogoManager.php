@@ -118,6 +118,13 @@ class CatalogoManager {
 
         return $Movimientos;
     }
+
+    public function getMovimientosRealizadosConDebito(){
+        $MotivoMovimiento = $this->getMotivoMovimientoPorDescripcion('COMPRA TARJETA DE DEBITO');
+        $Movimientos = $this->entityManager->getRepository(Movimiento::class)->findBy(['MotivoMovimiento' => $MotivoMovimiento]);
+
+        return $Movimientos;
+    }
     
     /**
      * LA CREACION Y MODIFICACION DE LAS ENTIDADES MOVERLAS LUEGO A UN MANAGER DIFERENTE
