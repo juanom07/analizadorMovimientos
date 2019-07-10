@@ -82,12 +82,27 @@ return [
                     ],
                 ],
             ],
+            'reportes' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/reportes[/:action[/:id]]',
+                    'defaults' => [
+                        'controller' => Controller\ReportesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'constraints' => [
+                    'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    'id' => '[a-zA-Z0-9_-]*',
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-            Controller\ConfController::class => Controller\Factory\ConfControllerFactory::class
+            Controller\ConfController::class => Controller\Factory\ConfControllerFactory::class,
+            Controller\ReportesController::class => Controller\Factory\ReportesControllerFactory::class
         ],
     ],
     'service_manager' => [

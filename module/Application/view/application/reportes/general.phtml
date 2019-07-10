@@ -1,0 +1,266 @@
+<div class="form-row">
+    <div class="col-md-12">
+    <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Primeros reportes</h3>
+            </div>
+            <div class="card-body" id="">
+                <div class="form-row">
+                    <div class="col-md-2">
+                        <label for="">Selección del Periodo:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="fechas" id="fechas" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="display:none;" id="divGraficos">
+            <div class="col-md-6">
+                <div id="tortaIngresos" style="height: 500px;"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="tortaGastos" style="height: 500px;"></div>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="">Movimientos en Periodo Seleccionado</h3>
+            </div>
+            <div class="card-body" id="divMovPeriodo">
+                <table id="tablaMovimientosPeriodo" class="table table-hover">
+                    <thead>
+                        <tr class="">
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Motivo</th>
+                            <th class="text-center">Detalle</th>
+                            <th class="text-center">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyMovimientosPeriodo">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<script>
+
+var arrMovimientosJSON = <?= $arrMovimientosJSON ?>;
+
+function dibujarTablaMovimientos(){
+    $('#bodyMovimientos').find('tr').remove();
+    
+    for (var i = 0; i < arrMovimientosJSON.length; i++)
+    {
+        var movimiento = arrMovimientosJSON[i];
+        var body = document.getElementById("bodyMovimientos");
+        var row = body.insertRow();
+        
+        row.id = i;
+        
+        var fecha = row.insertCell(0);
+        var motivo = row.insertCell(1);
+        var detalle = row.insertCell(2);
+        var valor = row.insertCell(3);
+        
+        fecha.innerHTML = movimiento.fecha.substring(0,16);
+        motivo.innerHTML = movimiento.motivoMovimiento.descripcion;
+        detalle.innerHTML = movimiento.descripcion;
+        valor.innerHTML = movimiento.valor;
+        
+        if (parseFloat(movimiento.valor) > 0){
+            // row.classList.add("table-success");
+            valor.style.color = 'green';
+        }else{
+            // row.classList.add("table-danger");
+            valor.style.color = 'red';
+        }
+    }
+}
+
+$(document).ready(function (e) {
+    $('input[name="fechas"]').daterangepicker({
+        locale: {
+            format: 'DD/MM/YYYY',
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Hasta",
+            customRangeLabel: "Personalizado",
+            daysOfWeek: [
+                "Dom",
+                "Lun",
+                "Mar",
+                "Mie",
+                "Jue",
+                "Vie",
+                "Sab"
+            ],
+            monthNames: [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ]
+        },
+        // minDate: , //La fecha minima de movimientos
+        // maxDate: , //fecha maxima de movimientos
+        ranges: {
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Últimos 7 Días': [moment().subtract(6, 'days'), moment()],
+            'Últimos 30 Días': [moment().subtract(29, 'days'), moment()],
+            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+            'Mes Anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        alwaysShowCalendars: true,
+    });
+
+    
+    
+
+});
+
+    var fechaInicialSelec = '';
+    var fechaFinalSelec = '';
+    var arrMovEnPeriodo = [];
+    var arrMovEnPeriodo = [];
+    var cantidadesMovIngresos = {};
+    var cantidadesMovGastos = {};
+    //Dibujo de graficos
+    //https://developers.google.com/chart/interactive/docs/gallery/piechart
+
+    google.charts.load('current', {'packages':['corechart']});
+
+$('#fechas').on('apply.daterangepicker', function(ev, picker) {
+    dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
+    analisarResultadosParaGrafico();
+    $('#divGraficos').fadeIn(500);
+    dibujarGraficoTortaIngresos();
+    dibujarGraficoTortaGastos();
+});
+
+function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
+    $('#bodyMovimientosPeriodo').find('tr').remove();
+    arrMovEnPeriodo = [];
+    for (var i = 0; i < arrMovimientosJSON.length; i++)
+    {
+        var movimiento = arrMovimientosJSON[i];
+        var fechaMov = moment(movimiento.fecha.substring(0, 10), "DD/MM/YYYY");
+        if ((fechaInicial.diff(fechaMov) <= 0) && (fechaFinal.diff(fechaMov) >= 0)){
+            arrMovEnPeriodo.push(movimiento);
+            var body = document.getElementById("bodyMovimientosPeriodo");
+            var row = body.insertRow();
+            
+            row.id = i;
+            
+            var fecha = row.insertCell(0);
+            var motivo = row.insertCell(1);
+            var detalle = row.insertCell(2);
+            var valor = row.insertCell(3);
+            
+            fecha.innerHTML = movimiento.fecha.substring(0,16);
+            motivo.innerHTML = movimiento.motivoMovimiento.descripcion;
+            detalle.innerHTML = movimiento.descripcion;
+            valor.innerHTML = movimiento.valor;
+            
+            if (parseFloat(movimiento.valor) > 0){
+                valor.style.color = 'green';
+            }else{
+                valor.style.color = 'red';
+            }
+        }
+    }
+}
+
+/**
+* Funcion para guardar los datos de movimientos dentro del periodo en los arreglos correspondinetes
+* Esta funcion es para mostrar las sumas totales de pesos
+* tanto para ingresos como para gastos
+*/
+function procesarCargaDeArrDeDatos(arrCantMov, movimiento){
+    var descMotivo = movimiento.motivoMovimiento.descripcion;
+
+    if (arrCantMov.hasOwnProperty(descMotivo)){
+        arrCantMov[descMotivo] += parseFloat(movimiento.valor);
+    }else{
+        arrCantMov[descMotivo] = parseFloat(movimiento.valor);
+    }
+}
+
+/**
+ * Funcion que determina cuales son los movimientos que cumplen con el
+ * periodo de tiempo seleccionado. A su vez hace una division en ingresos o gastos.
+ *
+ * @return void
+ */
+function analisarResultadosParaGrafico(){
+    cantidadesMovIngresos = {};
+    cantidadesMovGastos = {}
+    for (var i = 0; i < arrMovEnPeriodo.length; i++){
+        var movimiento = arrMovEnPeriodo[i];
+        
+        if (movimiento.motivoMovimiento.categoriaMovimiento != '' 
+            && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+            if (movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.id == '1'){
+                //Ingresos
+                procesarCargaDeArrDeDatos(cantidadesMovIngresos, movimiento);
+            }else{
+                //Gastos
+                procesarCargaDeArrDeDatos(cantidadesMovGastos, movimiento);
+            }
+        }
+        
+    }
+}
+
+/**
+* Procesa el dibujo de un grafico de torta
+*/
+function procesarDibujarGraficoTorta(arrMovimientos, arrDatosGrafico, tituloGrafico, idDivGrafico){
+    Object.keys(arrMovimientos).forEach(function(key){
+        var elemento = [key, Math.abs(arrMovimientos[key])];
+
+        arrDatosGrafico.push(elemento);
+    });
+
+    var data = google.visualization.arrayToDataTable(arrDatosGrafico);
+
+    var options = {
+        title: tituloGrafico,
+        legend: {position: 'none'}
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById(idDivGrafico));
+
+    chart.draw(data, options);
+}
+
+function dibujarGraficoTortaIngresos() {
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    procesarDibujarGraficoTorta(cantidadesMovIngresos, arrDatos, 'Pesos $AR por Tipo de Ingresos', 'tortaIngresos');
+}
+
+function dibujarGraficoTortaGastos() {
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaGastos');
+    
+}
+
+</script>
