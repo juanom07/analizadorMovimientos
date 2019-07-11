@@ -17,7 +17,16 @@
         </div>
         <div class="form-row" style="display:none;" id="divGraficos">
             <div class="col-md-6">
-                <div id="tortaGastos" style="height: 500px;"></div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div id="tortaGastos" style="height: 500px;"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12 text-center">
+                        <h3 id="saldoTipoMov"></h3>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card mt-3">
@@ -91,9 +100,6 @@ $(document).ready(function (e) {
         },
         alwaysShowCalendars: true,
     });
-
-    
-    
 
 });
 
@@ -298,7 +304,8 @@ function dibujarGraficoTortaGastos() {
     ];
 
     var totalGastos = contarTotalPesosArr(cantidadesMovGastos);
-    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos. Total: $'+totalGastos, 'tortaGastos');
+    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalGastos.toFixed(2);
+    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaGastos');
     
 }
 

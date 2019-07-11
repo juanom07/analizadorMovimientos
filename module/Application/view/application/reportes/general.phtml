@@ -165,6 +165,8 @@ $(document).ready(function (e) {
     google.charts.load('current', {'packages':['corechart']});
 
 $('#fechas').on('apply.daterangepicker', function(ev, picker) {
+    $('#tortaIngresosGasto').fadeOut(500);
+    $('#saldoTipoMov').fadeOut(500);
     dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
     analisarResultadosParaGrafico();
     $('#divGraficos').fadeIn(500);
@@ -311,7 +313,18 @@ function contarTotalPesosArr(arrCantidades){
 }
 
 function calcularSaldoTotal(arrMovEnPeriodo){
-    var total = parseFloat(arrMovEnPeriodo['Ingreso']) - parseFloat(arrMovEnPeriodo['Gasto']);
+    var totalIngreso = 0;
+    var totalGasto = 0;
+    
+    if (arrMovEnPeriodo.hasOwnProperty('Ingreso')){
+        totalIngreso = arrMovEnPeriodo['Ingreso'];
+    }
+
+    if (arrMovEnPeriodo.hasOwnProperty('Gasto')){
+        totalGasto = arrMovEnPeriodo['Gasto'];
+    }
+
+    var total = parseFloat(totalIngreso) - parseFloat(totalGasto);
 
     return total;
 }
@@ -322,7 +335,7 @@ function dibujarGraficoTotal(){
     ];
 
     var total = calcularSaldoTotal(cantidadesMovTotal);
-    document.getElementById('saldoTotal').innerHTML = 'Saldo: $'+total;
+    document.getElementById('saldoTotal').innerHTML = 'Saldo: $'+total.toFixed(2);
     procesarDibujarGraficoTorta(cantidadesMovTotal, arrDatos, 'Pesos $AR por Tipo de Movimiento', 'tortaTotal');
 }
 
@@ -336,7 +349,7 @@ function dibujarGraficoTortaIngresos() {
 
     var totalIngresos = contarTotalPesosArr(cantidadesMovIngresos);
 
-    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalIngresos;
+    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalIngresos.toFixed(2);
     procesarDibujarGraficoTorta(cantidadesMovIngresos, arrDatos, 'Pesos $AR por Tipo de Ingresos', 'tortaIngresosGasto');
 }
 
@@ -349,7 +362,7 @@ function dibujarGraficoTortaGastos() {
     
     var totalGastos = contarTotalPesosArr(cantidadesMovGastos);
     
-    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalGastos;
+    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalGastos.toFixed(2);
     procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaIngresosGasto');
 }
 
