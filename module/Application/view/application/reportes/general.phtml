@@ -17,11 +17,35 @@
         </div>
         <div class="form-row" style="display:none;" id="divGraficos">
             <div class="col-md-6">
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div id="tortaTotal" style="height: 500px;"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12 text-center">
+                        <h3 id="saldoTotal"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div id="tortaIngresosGasto" style="height: 500px;"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12 text-center">
+                        <h3 id="saldoTipoMov"></h3>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-md-6">
                 <div id="tortaIngresos" style="height: 500px;"></div>
             </div>
             <div class="col-md-6">
                 <div id="tortaGastos" style="height: 500px;"></div>
-            </div>
+            </div> -->
         </div>
         <div class="card mt-3">
             <div class="card-header">
@@ -71,12 +95,9 @@ function dibujarTablaMovimientos(){
         detalle.innerHTML = movimiento.descripcion;
         valor.innerHTML = movimiento.valor;
         
-        if (parseFloat(movimiento.valor) > 0){
-            // row.classList.add("table-success");
-            valor.style.color = 'green';
-        }else{
-            // row.classList.add("table-danger");
-            valor.style.color = 'red';
+        if (movimiento.motivoMovimiento.categoriaMovimiento != ''
+            && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+            valor.style.color = movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.color;
         }
     }
 }
@@ -137,6 +158,7 @@ $(document).ready(function (e) {
     var arrMovEnPeriodo = [];
     var cantidadesMovIngresos = {};
     var cantidadesMovGastos = {};
+    var cantidadesMovTotal = {};
     //Dibujo de graficos
     //https://developers.google.com/chart/interactive/docs/gallery/piechart
 
@@ -146,8 +168,7 @@ $('#fechas').on('apply.daterangepicker', function(ev, picker) {
     dibujarTablaMovimientosPeriodo(picker.startDate, picker.endDate);
     analisarResultadosParaGrafico();
     $('#divGraficos').fadeIn(500);
-    dibujarGraficoTortaIngresos();
-    dibujarGraficoTortaGastos();
+    dibujarGraficoTotal();
 });
 
 function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
@@ -174,10 +195,9 @@ function dibujarTablaMovimientosPeriodo(fechaInicial, fechaFinal){
             detalle.innerHTML = movimiento.descripcion;
             valor.innerHTML = movimiento.valor;
             
-            if (parseFloat(movimiento.valor) > 0){
-                valor.style.color = 'green';
-            }else{
-                valor.style.color = 'red';
+            if (movimiento.motivoMovimiento.categoriaMovimiento != ''
+                && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+                valor.style.color = movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.color;
             }
         }
     }
@@ -198,6 +218,19 @@ function procesarCargaDeArrDeDatos(arrCantMov, movimiento){
     }
 }
 
+function procesarCargaDeArrDeIngresosGastos(arrCantMov, movimiento){
+    if (movimiento.motivoMovimiento.categoriaMovimiento != ''
+        && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+        var descMotivo = movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.descripcion;
+
+        if (arrCantMov.hasOwnProperty(descMotivo)){
+            arrCantMov[descMotivo] += Math.abs(movimiento.valor);
+        }else{
+            arrCantMov[descMotivo] = Math.abs(movimiento.valor);
+        }
+    }
+}
+
 /**
  * Funcion que determina cuales son los movimientos que cumplen con el
  * periodo de tiempo seleccionado. A su vez hace una division en ingresos o gastos.
@@ -206,7 +239,8 @@ function procesarCargaDeArrDeDatos(arrCantMov, movimiento){
  */
 function analisarResultadosParaGrafico(){
     cantidadesMovIngresos = {};
-    cantidadesMovGastos = {}
+    cantidadesMovGastos = {};
+    cantidadesMovTotal = {};
     for (var i = 0; i < arrMovEnPeriodo.length; i++){
         var movimiento = arrMovEnPeriodo[i];
         
@@ -219,6 +253,7 @@ function analisarResultadosParaGrafico(){
                 //Gastos
                 procesarCargaDeArrDeDatos(cantidadesMovGastos, movimiento);
             }
+            procesarCargaDeArrDeIngresosGastos(cantidadesMovTotal, movimiento);
         }
         
     }
@@ -243,7 +278,52 @@ function procesarDibujarGraficoTorta(arrMovimientos, arrDatosGrafico, tituloGraf
 
     var chart = new google.visualization.PieChart(document.getElementById(idDivGrafico));
 
+    function selectHandler() {
+        var selectedItem = chart.getSelection()[0];
+        if (selectedItem) {
+            var topping = data.getValue(selectedItem.row, 0);
+
+            if (topping == 'Ingreso'){
+                dibujarGraficoTortaIngresos();
+            }else if(topping == 'Gasto'){
+                dibujarGraficoTortaGastos();
+            }
+        }else{
+            $('#tortaIngresosGasto').fadeOut(500);
+            $('#saldoTipoMov').fadeOut(500);
+        }
+    }
+
+    
+    google.visualization.events.addListener(chart, 'select', selectHandler);
+
     chart.draw(data, options);
+}
+
+function contarTotalPesosArr(arrCantidades){
+    var total = 0;
+
+    Object.keys(arrCantidades).forEach(function(key){
+        total += Math.abs(arrCantidades[key]);
+    });
+
+    return total;
+}
+
+function calcularSaldoTotal(arrMovEnPeriodo){
+    var total = parseFloat(arrMovEnPeriodo['Ingreso']) - parseFloat(arrMovEnPeriodo['Gasto']);
+
+    return total;
+}
+
+function dibujarGraficoTotal(){
+    var arrDatos = [
+        ['Tipo de Movimiento', 'Pesos']
+    ];
+
+    var total = calcularSaldoTotal(cantidadesMovTotal);
+    document.getElementById('saldoTotal').innerHTML = 'Saldo: $'+total;
+    procesarDibujarGraficoTorta(cantidadesMovTotal, arrDatos, 'Pesos $AR por Tipo de Movimiento', 'tortaTotal');
 }
 
 function dibujarGraficoTortaIngresos() {
@@ -251,16 +331,26 @@ function dibujarGraficoTortaIngresos() {
         ['Tipo de Movimiento', 'Pesos']
     ];
 
-    procesarDibujarGraficoTorta(cantidadesMovIngresos, arrDatos, 'Pesos $AR por Tipo de Ingresos', 'tortaIngresos');
+    $('#tortaIngresosGasto').fadeIn(500);
+    $('#saldoTipoMov').fadeIn(500);
+
+    var totalIngresos = contarTotalPesosArr(cantidadesMovIngresos);
+
+    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalIngresos;
+    procesarDibujarGraficoTorta(cantidadesMovIngresos, arrDatos, 'Pesos $AR por Tipo de Ingresos', 'tortaIngresosGasto');
 }
 
 function dibujarGraficoTortaGastos() {
     var arrDatos = [
         ['Tipo de Movimiento', 'Pesos']
     ];
-
-    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaGastos');
+    $('#tortaIngresosGasto').fadeIn(500);
+    $('#saldoTipoMov').fadeIn(500);
     
+    var totalGastos = contarTotalPesosArr(cantidadesMovGastos);
+    
+    document.getElementById('saldoTipoMov').innerHTML = 'Total: $'+totalGastos;
+    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaIngresosGasto');
 }
 
 </script>

@@ -60,12 +60,9 @@ function dibujarTablaMovimientos(){
         detalle.innerHTML = movimiento.descripcion;
         valor.innerHTML = movimiento.valor;
         
-        if (parseFloat(movimiento.valor) > 0){
-            // row.classList.add("table-success");
-            valor.style.color = 'green';
-        }else{
-            // row.classList.add("table-danger");
-            valor.style.color = 'red';
+        if (movimiento.motivoMovimiento.categoriaMovimiento != ''
+            && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+            valor.style.color = movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.color;
         }
     }
 }

@@ -173,10 +173,9 @@ function procesarNuevaFilaEnTablaHTML(movimiento){
 
     valor.innerHTML = movimiento.valor;
 
-    if (parseFloat(movimiento.valor) > 0){
-        valor.style.color = 'green';
-    }else{
-        valor.style.color = 'red';
+    if (movimiento.motivoMovimiento.categoriaMovimiento != ''
+        && movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento != ''){
+        valor.style.color = movimiento.motivoMovimiento.categoriaMovimiento.tipoMovimiento.color;
     }
 }
 
@@ -282,13 +281,24 @@ function procesarDibujarGraficoTorta(arrMovimientos, arrDatosGrafico, tituloGraf
     chart.draw(data, options);
 }
 
+function contarTotalPesosArr(arrCantidades){
+    var total = 0;
+
+    Object.keys(arrCantidades).forEach(function(key){
+        total += Math.abs(arrCantidades[key]);
+    });
+
+    return total;
+}
+
 
 function dibujarGraficoTortaGastos() {
     var arrDatos = [
         ['Tipo de Movimiento', 'Pesos']
     ];
 
-    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos', 'tortaGastos');
+    var totalGastos = contarTotalPesosArr(cantidadesMovGastos);
+    procesarDibujarGraficoTorta(cantidadesMovGastos, arrDatos, 'Pesos $AR por Tipo de Gastos. Total: $'+totalGastos, 'tortaGastos');
     
 }
 
