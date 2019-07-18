@@ -43,4 +43,13 @@ class ReportesController extends AbstractActionController
             'arrMovimientosJSON' => $arrMovimientosJSON
         ]);
     }
+
+    public function categoriaMovimientoAction()
+    {
+        $arrMovimientosJSON = $this->catalogoManager->getArrEntidadJSON('Movimiento');
+        
+        return new ViewModel([
+            'arrMovimientosJSON' => $arrMovimientosJSON
+        ]);
+    }
 }

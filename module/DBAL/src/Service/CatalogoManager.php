@@ -121,7 +121,7 @@ class CatalogoManager {
 
     public function getMovimientosRealizadosConDebito(){
         $MotivoMovimiento = $this->getMotivoMovimientoPorDescripcion('COMPRA TARJETA DE DEBITO');
-        $Movimientos = $this->entityManager->getRepository(Movimiento::class)->findBy(['MotivoMovimiento' => $MotivoMovimiento]);
+        $Movimientos = $this->entityManager->getRepository(Movimiento::class)->findBy(['MotivoMovimiento' => $MotivoMovimiento], ['fecha' => 'DESC']);
 
         return $Movimientos;
     }
