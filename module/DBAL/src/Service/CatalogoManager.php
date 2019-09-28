@@ -86,10 +86,47 @@ class CatalogoManager {
         return $this->arrEntidadesAJSON($arrEntidad);
     }
 
-    public function getMotivoMovimientoPorDescripcion($descripcion){
-        $MotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findOneBy(['descripcion' => $descripcion]);
+    /**
+     * Funcion para analisar si un motivo de movimiento es por gasto o por ingreso,
+     * dependiendo del valor del movimiento.
+     * 
+     * La unica posiblidad es q existan dos motivos iguales, y uno corresponde a ingresos y el otro a gastos,
+     * por eso se evalua el valor del movimiento.
+     *
+     * @param [array] $arrMotivoMovimiento
+     * @param [float] $valor
+     * @return MotivoMovimiento
+     */
+    private function procesarAnalisisMotivoMovimiento($arrMotivoMovimiento, $valor){
+        foreach ($arrMotivoMovimiento as $MotivoMovimiento){
+            if ($MotivoMovimiento->getCategoriaMovimiento()->getTipoMovimiento()->esIngreso()
+                && floatval($valor) > 0)//No importa que el parseo del float no sea perfecto, 
+                                        //es solo para determinar si es positivo o negativo
+            {
+                return $MotivoMovimiento;
+            }
 
-        return $MotivoMovimiento;
+            if ($MotivoMovimiento->getCategoriaMovimiento()->getTipoMovimiento()->esGasto()
+                && floatval($valor) < 0) 
+            {
+                return $MotivoMovimiento;
+            }
+        }
+
+        return null;
+    }
+
+    public function getMotivoMovimientoPorDescripcion($descripcion, $valor = null){
+        $arrMotivoMovimiento = $this->entityManager->getRepository(MotivoMovimiento::class)->findBy(['descripcion' => $descripcion]);
+
+        if (count($arrMotivoMovimiento) > 1 && isset($valor)){
+            //analizar cual corresponde.. seguro viene uno por ingreso y otro por egreso
+            return $this->procesarAnalisisMotivoMovimiento($arrMotivoMovimiento, $valor);
+        }else if (count($arrMotivoMovimiento) > 0){
+            return $arrMotivoMovimiento[0]; //Es unico
+        }
+
+        return null;
     }
 
     /**

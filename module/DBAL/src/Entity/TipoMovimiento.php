@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TipoMovimiento
 {
+    const ID_INGRESO = '1';
+    const ID_GASTO = '2';
+
     /**
      * @ORM\Id
      * @ORM\Column(name="idTipoMovimiento", type="integer")
@@ -48,6 +51,14 @@ class TipoMovimiento
     public function getColor()
     {
         return $this->color;
+    }
+
+    public function esIngreso(){
+        return ($this->id == self::ID_INGRESO);
+    }
+
+    public function esGasto(){
+        return ($this->id == self::ID_GASTO);
     }
 
 

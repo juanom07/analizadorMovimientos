@@ -99,7 +99,7 @@ class MovimientosManager {
         $arrStrings = $this->procesarDetalleMovimientoDesdeArchivo($detalle);
 
         if (count($arrStrings) > 1){
-            $motivoMovimiento = $this->catalogoManager->getMotivoMovimientoPorDescripcion($arrStrings[0]);
+            $motivoMovimiento = $this->catalogoManager->getMotivoMovimientoPorDescripcion($arrStrings[0], $valor);
 
             if (!isset($motivoMovimiento)){
                 $motivoMovimiento = $this->nuevoMotivoMovimiento($arrStrings[0]);

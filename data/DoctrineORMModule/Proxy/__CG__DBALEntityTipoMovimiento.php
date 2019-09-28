@@ -235,6 +235,28 @@ class TipoMovimiento extends \DBAL\Entity\TipoMovimiento implements \Doctrine\OR
     /**
      * {@inheritDoc}
      */
+    public function esIngreso()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'esIngreso', []);
+
+        return parent::esIngreso();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function esGasto()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'esGasto', []);
+
+        return parent::esGasto();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getJSON()
     {
 
