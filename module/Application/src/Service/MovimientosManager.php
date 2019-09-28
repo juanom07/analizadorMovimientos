@@ -189,7 +189,7 @@ class MovimientosManager {
         $Movimiento->setMotivoMovimiento($MotivoMovimiento);
         $Movimiento->setDescripcion(trim($descripcion));
         $Movimiento->setValor($valor);
-
+        
         $this->entityManager->persist($Movimiento);
         $this->entityManager->flush();
 
